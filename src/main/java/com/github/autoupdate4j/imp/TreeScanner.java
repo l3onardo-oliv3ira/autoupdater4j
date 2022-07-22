@@ -41,7 +41,7 @@ class TreeScanner implements IScanner {
   private FingerPrint fp;
   
   protected TreeScanner(File root) throws IOException {
-    fp = new FingerPrint(root);
+    reset(root);
   }
 
   @Override
