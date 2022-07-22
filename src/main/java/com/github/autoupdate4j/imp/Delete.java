@@ -28,7 +28,6 @@ package com.github.autoupdate4j.imp;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 final class Delete extends Command {
 
@@ -43,10 +42,14 @@ final class Delete extends Command {
 
   @Override
   public final void execute() throws IOException {
+    if (!input.exists())
+      return;
     if (input.isDirectory()) {
       rmDir(input);
-    } else if (input.exists()) {
-      Files.delete(input.toPath());
+      return;
+    }
+    if (!input.delete()) {
+      throw new IOException("Unabled to delete " + input);
     }
     requireNotExists(input);
   }  

@@ -34,8 +34,8 @@ import com.github.utils4j.imp.Threads;
 public class App {
   public static void main(String[] args) throws InterruptedException {
     Thread r = Threads.startAsync("Updating", () -> {
-      final File older = new File("D:\\temp\\comparacaoUPDATE\\PjeOffice PRO");
-      final File newer = new File("D:\\temp\\comparacaoUPDATE\\PjeOffice PRO NewVersion");
+      final File older = new File("E:\\temp\\PjeOffice PRO");
+      final File newer = new File("E:\\temp\\PjeOffice PRO New Version");
       
       IUpdater updater = new Updater(older, newer);
       updater.update();

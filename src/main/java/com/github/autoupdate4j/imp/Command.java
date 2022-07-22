@@ -30,7 +30,6 @@ import static java.nio.file.Files.walk;
 import static java.util.Comparator.reverseOrder;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -39,16 +38,6 @@ import com.github.utils4j.imp.function.Executable;
 
 abstract class Command implements Executable<IOException> {
 
-  protected static void mkDir(File folder) throws IOException {
-    if (folder.exists() || folder.mkdirs())
-      return;
-    throw new IOException("Unabled to create directory tree " + folder);
-  }
-  
-  protected static void rmDir(File input) throws IOException {
-    walk(input.toPath()).sorted(reverseOrder()).map(Path::toFile).forEach(File::delete);   
-  }
-  
   protected static void requireNotExists(File input) throws IOException {
     if (!input.exists())
       return;
@@ -58,7 +47,23 @@ abstract class Command implements Executable<IOException> {
   protected static void requireExists(File input) throws IOException {
     if (input.exists())
       return;
-    throw new FileNotFoundException(input.getAbsolutePath());    
+    throw new IOException("Unabled to copy to " + input);
+  }
+
+  protected static void rmDir(File folder) throws IOException {
+    walk(folder.toPath()).sorted(reverseOrder()).map(Path::toFile).forEach(File::delete);   
+  }
+
+  protected static void mkDir(File folder) throws IOException {
+    if (folder.exists()) {
+      if (folder.isDirectory())
+        return;      
+      if (!folder.delete())
+        throw new IOException("Unabled to delete file " + folder);
+    }
+    if (!folder.mkdirs()) {
+      throw new IOException("Unabled to create directory tree  " + folder);
+    }
   }
 
   protected final File input;
