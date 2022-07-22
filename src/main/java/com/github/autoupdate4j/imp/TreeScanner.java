@@ -65,10 +65,6 @@ class TreeScanner implements IScanner {
       super(progress);
     }
     
-    protected FileVisitResult doPreVisitDirectory(File dir) throws IOException {
-      return FileVisitResult.CONTINUE;
-    }
-
     protected FileVisitResult doVisitFile(File file) throws IOException {
       fp.add(file);
       info("%s", file);
