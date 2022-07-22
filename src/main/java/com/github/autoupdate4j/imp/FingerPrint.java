@@ -42,7 +42,7 @@ import java.util.Optional;
 
 import com.github.autoupdate4j.IFingerPrint;
 import com.github.autoupdate4j.IPatch;
-import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.Directory;
 
 class FingerPrint implements IFingerPrint {
 
@@ -59,7 +59,7 @@ class FingerPrint implements IFingerPrint {
   }
 
   private void reset(File basePath) throws IOException {
-    Args.requireDirectory(basePath, "basePath is not directory");
+    Directory.requireDirectory(basePath, "basePath is not directory");
     this.length = basePath.getCanonicalPath().length();
     this.basePath = basePath;
     this.reset();

@@ -26,49 +26,9 @@
 
 package com.github.autoupdate4j.imp;
 
-import static java.nio.file.Files.walk;
-import static java.util.Comparator.reverseOrder;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
-import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.function.Executable;
 
 abstract class Command implements Executable<IOException> {
-
-  protected static void requireNotExists(File input) throws IOException {
-    if (!input.exists())
-      return;
-    throw new IOException("Unabled to delete " + input);
-  }
-  
-  protected static void requireExists(File input) throws IOException {
-    if (input.exists())
-      return;
-    throw new IOException("Unabled to copy to " + input);
-  }
-
-  protected static void rmDir(File folder) throws IOException {
-    walk(folder.toPath()).sorted(reverseOrder()).map(Path::toFile).forEach(File::delete);   
-  }
-
-  protected static void mkDir(File folder) throws IOException {
-    if (folder.exists()) {
-      if (folder.isDirectory())
-        return;      
-      if (!folder.delete())
-        throw new IOException("Unabled to delete file " + folder);
-    }
-    if (!folder.mkdirs()) {
-      throw new IOException("Unabled to create directory tree  " + folder);
-    }
-  }
-
-  protected final File input;
-  
-  protected Command(File input) {
-    this.input = Args.requireNonNull(input, "input is null");
-  }  
 }

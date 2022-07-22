@@ -29,7 +29,9 @@ package com.github.autoupdate4j.imp;
 import java.io.File;
 import java.io.IOException;
 
-final class Delete extends Command {
+import com.github.utils4j.imp.Directory;
+
+final class Delete extends InputAware {
 
   Delete(File input) {
     super(input);
@@ -45,12 +47,12 @@ final class Delete extends Command {
     if (!input.exists())
       return;
     if (input.isDirectory()) {
-      rmDir(input);
+      Directory.rmDir(input.toPath());
       return;
     }
     if (!input.delete()) {
       throw new IOException("Unabled to delete " + input);
     }
-    requireNotExists(input);
+    Directory.requireNotExists(input, "Unabled to " + this);
   }  
 }

@@ -26,33 +26,67 @@
 
 package com.github.autoupdate4j.imp;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
+import com.github.progress4j.IProgressView;
+import com.github.progress4j.imp.ProgressStatus;
+import com.github.progress4j.imp.Stage;
+import com.github.utils4j.IDownloader;
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.Directory;
+import com.github.utils4j.imp.DownloadStatus;
 
-final class Copy extends InputAware {
+import io.reactivex.disposables.Disposable;
 
-  private final File output;
+final class Download extends Command {
+
+  private final String url;
   
-  Copy(File input, File output) {
-    super(input);
+  private final File output;
+
+  private final IDownloader downloader;
+
+  private final IProgressView progress;
+  
+  Download(IProgressView progress, IDownloader downloader, String url, File output) {
+    this.url = Args.requireText(url, "url is empty or null");
     this.output = Args.requireNonNull(output, "output is null");
+    this.progress = Args.requireNonNull(progress, "progress is null");
+    this.downloader = Args.requireNonNull(downloader, "downloader is null");
   }
 
   @Override
   public final String toString() {
-    return "COPY " + input + " TO " + output;
+    return "DOWNLOAD " + url + " TO " + output;
   }
 
   @Override
   public final void execute() throws IOException {
-    Directory.mkDir(output.getParentFile());
-    Files.copy(input.toPath(), output.toPath(), REPLACE_EXISTING);
-    Directory.requireExists(output, "Unabled to " + this);
+    Disposable ticket = downloader.newRequest().subscribe(req -> {
+      progress.cancelCode(req::abort);
+    });
+
+    File input;
+    try {
+      DownloadStatus status = new ProgressStatus(
+        progress, 
+        new Stage("Downloading url: " + url)
+      );
+      
+      downloader.download(url, status);
+      
+      input = status.getDownloadedFile().orElseThrow(() -> 
+        new IOException("Arquivo vazio (length: 0): " + url)
+      );
+      
+    } finally {
+      ticket.dispose();
+    }    
+    
+    try {
+      new Copy(input, output).execute();
+    }finally {
+      input.delete();
+    }
   }
 }

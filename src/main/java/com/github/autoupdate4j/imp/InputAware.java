@@ -29,21 +29,15 @@ package com.github.autoupdate4j.imp;
 import java.io.File;
 import java.io.IOException;
 
-import com.github.utils4j.imp.Directory;
+import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.function.Executable;
 
-final class Mkdir extends InputAware {
+abstract class InputAware extends Command implements Executable<IOException> {
 
-  Mkdir(File input) {
-    super(input);
-  }
-
-  @Override
-  public final String toString() {
-    return "MKDIR " + input;
-  }
+  protected final File input;
   
-  @Override
-  public final void execute() throws IOException {
-    Directory.mkDir(input);
-  }
+  protected InputAware(File input) {
+    this.input = Args.requireNonNull(input, "input is null");
+  } 
+  
 }
