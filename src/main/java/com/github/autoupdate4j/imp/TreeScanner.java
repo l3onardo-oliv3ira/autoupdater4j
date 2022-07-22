@@ -55,23 +55,25 @@ class TreeScanner implements IScanner {
     Args.requireNonNull(progress, "progress is null");
     if (fp.ready())
       return fp;
-    Files.walkFileTree(fp.getBasePath().toPath(), new Builder(progress));   
+    Files.walkFileTree(fp.getBasePath().toPath(), new Visitor(progress));   
     return fp.signature();
   }
   
-  private class Builder extends StepVisitor {
+  private class Visitor extends StepVisitor {
 
-    Builder(IProgress progress){
+    Visitor(IProgress progress){
       super(progress);
     }
     
     protected FileVisitResult doVisitFile(File file) throws IOException {
-      fp.add(file);
-      info("%s", file);
-      return FileVisitResult.CONTINUE;
+      return visit(file);
     }
 
     protected FileVisitResult doPostVisitDirectory(File dir) throws IOException {
+      return visit(dir);
+    }
+
+    private FileVisitResult visit(File dir) throws IOException {
       fp.add(dir);
       info("%s", dir);
       return FileVisitResult.CONTINUE;
