@@ -27,19 +27,16 @@
 package com.github.autoupdate4j;
 
 import java.io.File;
+import java.io.IOException;
 
-import com.github.autoupdate4j.imp.Updater;
-import com.github.utils4j.imp.Threads;
+import com.github.autoupdate4j.imp.TreeUpdater;
 
 public class App {
-  public static void main(String[] args) throws InterruptedException {
-    Thread r = Threads.startAsync("Updating", () -> {
-      final File older = new File("E:\\temp\\PjeOffice PRO");
-      final File newer = new File("E:\\temp\\PjeOffice PRO New Version");
-      
-      IUpdater updater = new Updater(older, newer);
-      updater.update();
-    });
-    r.join();
- }
+  public static void main(String[] args) throws IOException, InterruptedException {
+    final File older = new File("D:\\temp\\comparacaoUPDATE\\PjeOffice PRO");
+    final File newer = new File("D:\\temp\\comparacaoUPDATE\\PjeOffice PRO New Version");
+    
+    IUpdater updater = new TreeUpdater(older, newer);
+    updater.update();
+  }
 }

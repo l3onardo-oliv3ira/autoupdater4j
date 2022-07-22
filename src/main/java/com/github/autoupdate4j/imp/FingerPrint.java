@@ -62,10 +62,10 @@ class FingerPrint implements IFingerPrint {
     Directory.requireDirectory(basePath, "basePath is not directory");
     this.length = basePath.getCanonicalPath().length();
     this.basePath = basePath;
-    this.reset();
+    this.clear();
   }
   
-  private final void reset() {
+  final void clear() {
     this.items.clear();
     this.id = "";
   }
@@ -107,7 +107,7 @@ class FingerPrint implements IFingerPrint {
   
   @Override
   public final void readFrom(File input) throws IOException {
-    reset();
+    clear();
     try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
       String line; int lineNumber = 0;
       while((line = reader.readLine()) != null) {
@@ -123,7 +123,7 @@ class FingerPrint implements IFingerPrint {
       }
       signature();
     } catch (IOException e) {
-      reset();
+      clear();
       throw e;
     }
   }

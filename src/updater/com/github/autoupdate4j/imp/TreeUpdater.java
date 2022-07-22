@@ -24,12 +24,14 @@
 * SOFTWARE.
 */
 
-package com.github.autoupdate4j;
+package com.github.autoupdate4j.imp;
 
+import java.io.File;
 import java.io.IOException;
 
-import com.github.progress4j.IProgress;
+public class TreeUpdater extends DefaulUpdater {
 
-public interface IScanner {
-  IFingerPrint scan(IProgress progress) throws IOException;
+  public TreeUpdater(File older, File newer) throws IOException {
+    super(new TreeScanner(older), new TreeScanner(newer));
+  }
 }

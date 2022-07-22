@@ -27,7 +27,6 @@
 package com.github.autoupdate4j.imp;
 
 import java.awt.Toolkit;
-import java.io.File;
 import java.io.IOException;
 
 import com.github.autoupdate4j.IFingerPrint;
@@ -41,11 +40,12 @@ import com.github.progress4j.imp.ProgressFactory;
 import com.github.utils4j.gui.imp.AlertDialog;
 import com.github.utils4j.imp.Args;
 
-public class Updater implements IUpdater {
+public class DefaulUpdater implements IUpdater {
 
   private static final IProgressFactory FACTORY = new ProgressFactory();
   
   private static enum Stage implements IStage {
+    
     UPDATING("Atualizando a aplicação"),
     
     SCANNING("Calculando impressão digital (seja paciente)");
@@ -61,10 +61,11 @@ public class Updater implements IUpdater {
       return message;
     }
   }
+  
+  protected final IScanner older;
+  protected final IScanner newer;
 
-  protected final File older, newer;
-
-  public Updater(File older, File newer) {
+  public DefaulUpdater(IScanner older, IScanner newer) {
     this.older = Args.requireNonNull(older, "older is null");
     this.newer = Args.requireNonNull(newer, "newer is null");
   }
@@ -91,17 +92,15 @@ public class Updater implements IUpdater {
     
     progress.begin(Stage.SCANNING);
     
-    IScanner scanner = new TreeScanner(older);
-    
-    progress.info("Escaneando '%s'", older);    
-    IFingerPrint oldFp = scanner.scan(progress);
+    progress.info("Local scanning...");    
+    IFingerPrint oldFp = older.scan(progress);
     String oldId = oldFp.getId();    
-    progress.info("Impressão digital de %s : %s", older.getName(), oldId);
+    progress.info("Impressão digital local: %s", oldId);
     
-    progress.info("Escaneando '%s'", newer);
-    IFingerPrint newFp = scanner.reset(newer).scan(progress);
+    progress.info("Remote scanning...");
+    IFingerPrint newFp = newer.scan(progress);
     String newId = newFp.getId();
-    progress.info("Impressão digital de %s : %s", newer.getName(), newId);
+    progress.info("Impressão digital remota: %s", newId);
     
     progress.end();
     

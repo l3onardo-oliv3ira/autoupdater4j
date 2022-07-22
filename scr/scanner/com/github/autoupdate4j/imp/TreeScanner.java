@@ -36,16 +36,15 @@ import com.github.autoupdate4j.IScanner;
 import com.github.progress4j.IProgress;
 import com.github.utils4j.imp.Args;
 
-class TreeScanner implements IScanner {
+final class TreeScanner implements IScanner {
 
   private FingerPrint fp;
   
   protected TreeScanner(File root) throws IOException {
     reset(root);
   }
-
-  @Override
-  public IScanner reset(File root) throws IOException {
+  
+  final IScanner reset(File root) throws IOException {
     this.fp = new FingerPrint(root);
     return this;
   }
@@ -55,7 +54,7 @@ class TreeScanner implements IScanner {
     Args.requireNonNull(progress, "progress is null");
     if (fp.ready())
       return fp;
-    Files.walkFileTree(fp.getBasePath().toPath(), new Visitor(progress));   
+    Files.walkFileTree(fp.getBasePath().toPath(), new Visitor(progress));  
     return fp.signature();
   }
   
