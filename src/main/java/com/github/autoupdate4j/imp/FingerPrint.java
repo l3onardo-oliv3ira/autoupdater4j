@@ -129,12 +129,12 @@ class FingerPrint implements IFingerPrint {
   }
 
   @Override
-  public Optional<IPatch> patch(IFingerPrint main) {
-    if (!(main instanceof FingerPrint))
+  public Optional<IPatch> patch(IFingerPrint to) {
+    if (!(to instanceof FingerPrint))
       return Optional.empty();
 
     Patch patch = new Patch();
-    final FingerPrint target = (FingerPrint)main;
+    final FingerPrint target = (FingerPrint)to;
 
     items.forEach((myHash, myOrigin) -> {
       String otherFile = target.items.get(myHash);
