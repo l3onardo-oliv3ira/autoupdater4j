@@ -29,6 +29,7 @@ package com.github.autoupdate4j.imp;
 import java.io.File;
 import java.io.IOException;
 
+import com.github.progress4j.IProgressView;
 import com.github.utils4j.imp.Directory;
 
 final class Delete extends InputAware {
@@ -43,7 +44,7 @@ final class Delete extends InputAware {
   }
 
   @Override
-  public final void execute() throws IOException {
+  public final void run(IProgressView progress) throws IOException {
     if (!input.exists())
       return;
     if (input.isDirectory()) {
@@ -54,5 +55,5 @@ final class Delete extends InputAware {
       throw new IOException("Unabled to delete " + input);
     }
     Directory.requireNotExists(input, "Unabled to " + this);
-  }  
+  }
 }

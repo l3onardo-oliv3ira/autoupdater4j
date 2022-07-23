@@ -27,5 +27,5 @@
 package com.github.autoupdate4j;
 
 public interface IUpdater {
-  void update();
+  boolean update();
 }

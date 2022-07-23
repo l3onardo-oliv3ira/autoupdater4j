@@ -28,7 +28,8 @@ package com.github.autoupdate4j.imp;
 
 import java.io.IOException;
 
-import com.github.utils4j.imp.function.Executable;
+import com.github.progress4j.IProgressView;
+import com.github.utils4j.imp.function.Runnable;
 
-abstract class Command implements Executable<IOException> {
+interface Command extends Runnable<IProgressView, IOException> {
 }

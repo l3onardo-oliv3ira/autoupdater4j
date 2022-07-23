@@ -28,39 +28,43 @@ package com.github.autoupdate4j.imp;
 
 import com.github.autoupdate4j.IPatch;
 import com.github.autoupdate4j.IPatcher;
-import com.github.progress4j.IProgress;
+import com.github.progress4j.IProgressView;
 import com.github.utils4j.gui.imp.AlertDialog;
 import com.github.utils4j.gui.imp.ExceptionAlert;
 import com.github.utils4j.imp.Args;
 
 class Patcher implements IPatcher {
 
-  protected final IProgress progress;
+  protected final IProgressView progress;
   
-  public Patcher(IProgress progress) {
+  public Patcher(IProgressView progress) {
     this.progress = Args.requireNonNull(progress, "progress is null");
   }
   
   @Override
-  public final void apply(IPatch p) {
+  public final boolean apply(IPatch p) {
     try {
       beforeApply();
       p.apply(progress);
       afterApply();
+      return true;
     } catch (Exception e) {
       handleError(e);
+      return false;
     }    
   }
 
   protected void beforeApply() {
-    
+    //backup here!
   }
 
   protected void afterApply() {
+    //delete backup!
     AlertDialog.info("Atualização finalizada com sucesso!");
   }
   
   protected void handleError(Exception e) {
+    //restore here
     ExceptionAlert.show("Não foi possível atualizar a aplicação", e);
   }
 }

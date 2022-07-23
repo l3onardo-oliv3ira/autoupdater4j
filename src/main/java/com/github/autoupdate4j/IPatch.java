@@ -26,8 +26,8 @@
 
 package com.github.autoupdate4j;
 
-import com.github.progress4j.IProgress;
+import com.github.progress4j.IProgressView;
 
 public interface IPatch {
-  void apply(IProgress progress) throws Exception;
+  void apply(IProgressView progress) throws Exception;
 }

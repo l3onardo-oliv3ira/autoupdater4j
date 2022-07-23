@@ -36,16 +36,16 @@ import com.github.autoupdate4j.IScanner;
 import com.github.progress4j.IProgress;
 import com.github.utils4j.imp.Args;
 
-final class TreeScanner implements IScanner {
+public final class TreeScanner implements IScanner {
 
-  private FingerPrint fp;
+  private TreeFingerPrint fp;
   
-  protected TreeScanner(File root) throws IOException {
+  public TreeScanner(File root) throws IOException {
     reset(root);
   }
   
   final IScanner reset(File root) throws IOException {
-    this.fp = new FingerPrint(root);
+    this.fp = new TreeFingerPrint(root);
     return this;
   }
   

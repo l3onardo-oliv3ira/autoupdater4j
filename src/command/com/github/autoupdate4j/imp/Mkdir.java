@@ -29,6 +29,7 @@ package com.github.autoupdate4j.imp;
 import java.io.File;
 import java.io.IOException;
 
+import com.github.progress4j.IProgressView;
 import com.github.utils4j.imp.Directory;
 
 final class Mkdir extends InputAware {
@@ -43,7 +44,7 @@ final class Mkdir extends InputAware {
   }
   
   @Override
-  public final void execute() throws IOException {
+  public final void run(IProgressView progress) throws IOException {
     Directory.mkDir(input);
   }
 }

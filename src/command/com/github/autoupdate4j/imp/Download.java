@@ -35,48 +35,45 @@ import com.github.progress4j.imp.Stage;
 import com.github.utils4j.IDownloader;
 import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.DownloadStatus;
+import com.github.utils4j.imp.DownloaderAware;
 
 import io.reactivex.disposables.Disposable;
 
-final class Download extends Command {
+final class Download extends DownloaderAware implements Command {
 
-  private final String url;
+  private final String uri;
   
   private final File output;
 
-  private final IDownloader downloader;
-
-  private final IProgressView progress;
-  
-  Download(IProgressView progress, IDownloader downloader, String url, File output) {
-    this.url = Args.requireText(url, "url is empty or null");
+  Download(IDownloader downloader, String uri, File output) {
+    super(downloader);
+    this.uri = Args.requireText(uri, "uri is empty or null");
     this.output = Args.requireNonNull(output, "output is null");
-    this.progress = Args.requireNonNull(progress, "progress is null");
-    this.downloader = Args.requireNonNull(downloader, "downloader is null");
   }
 
   @Override
   public final String toString() {
-    return "DOWNLOAD " + url + " TO " + output;
+    return "DOWNLOAD " + uri + " TO " + output;
   }
 
   @Override
-  public final void execute() throws IOException {
+  public final void run(IProgressView progress) throws IOException {
+    
     Disposable ticket = downloader.newRequest().subscribe(req -> {
       progress.cancelCode(req::abort);
     });
 
-    File input;
+    File temp;
     try {
       DownloadStatus status = new ProgressStatus(
         progress, 
-        new Stage("Downloading url: " + url)
+        new Stage("Downloading url: " + uri)
       );
       
-      downloader.download(url, status);
+      downloader.download(uri, status);
       
-      input = status.getDownloadedFile().orElseThrow(() -> 
-        new IOException("Arquivo vazio (length: 0): " + url)
+      temp = status.getDownloadedFile().orElseThrow(() -> 
+        new IOException("Arquivo vazio (length: 0): " + uri)
       );
       
     } finally {
@@ -84,9 +81,9 @@ final class Download extends Command {
     }    
     
     try {
-      new Copy(input, output).execute();
+      new Copy(temp, output).run(progress);
     }finally {
-      input.delete();
+      temp.delete();
     }
   }
 }

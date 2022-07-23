@@ -27,7 +27,6 @@
 package com.github.autoupdate4j.imp;
 
 import static com.github.utils4j.imp.Streams.sha1;
-import static com.github.utils4j.imp.Strings.replace;
 import static java.util.Comparator.naturalOrder;
 
 import java.io.BufferedReader;
@@ -38,33 +37,20 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import com.github.autoupdate4j.IFingerPrint;
-import com.github.autoupdate4j.IPatch;
-import com.github.utils4j.imp.Directory;
+import com.github.utils4j.IDownloader;
+import com.github.utils4j.imp.Args;
 
-class FingerPrint implements IFingerPrint {
+abstract class FingerPrint implements IFingerPrint {
 
-  private String id;
+  private String id = "";
 
-  private int length;
-  
-  private File basePath;
+  protected final Map<String, String> items = new HashMap<>();
 
-  private final Map<String, String> items = new HashMap<>();
-
-  FingerPrint(File basePath) throws IOException {
-    reset(basePath);
+  protected FingerPrint() {
   }
 
-  private void reset(File basePath) throws IOException {
-    Directory.requireDirectory(basePath, "basePath is not directory");
-    this.length = basePath.getCanonicalPath().length();
-    this.basePath = basePath;
-    this.clear();
-  }
-  
   final void clear() {
     this.items.clear();
     this.id = "";
@@ -74,26 +60,6 @@ class FingerPrint implements IFingerPrint {
   public final String getId() {
     return id;
   }  
-  
-  final File getBasePath() {
-    return basePath;
-  }
-
-  @Override
-  public final void writeTo(File output) throws IOException {
-    try(PrintStream printer = new PrintStream(new FileOutputStream(output))) {
-      items.forEach((key, value) -> printer.println(key));
-    }
-  }
-  
-  final void add(File file) throws IOException {
-    String canonical = file.getCanonicalPath();
-    String suffixPath = canonical.substring(length);
-    String relative = replace(suffixPath, '\\', '/');
-    String hashFile = file.isDirectory() ? "directory" : sha1(file);
-    String hashId = hashFile + ":" + relative;
-    items.put(hashId, relative);    
-  }
   
   final boolean ready() {
     return !id.isEmpty();
@@ -106,20 +72,23 @@ class FingerPrint implements IFingerPrint {
   }
   
   @Override
+  public final void writeTo(File output) throws IOException {
+    try(PrintStream printer = new PrintStream(new FileOutputStream(output))) {
+      items.forEach((key, value) -> printer.println(key));
+    }
+  }
+  
+  @Override
   public final void readFrom(File input) throws IOException {
+    Args.requireNonNull(input, "input is null");
     clear();
     try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
-      String line; int lineNumber = 0;
+      String line;
       while((line = reader.readLine()) != null) {
-        lineNumber++;
         int idx = line.indexOf(':');
-        if (idx <= 0) {
-          throw new IOException("Linha " + lineNumber + 
-              " com formato inválido (falta o ':' ou mal posicionado)");
-        }
         String key = line.substring(0, idx);
         String val = line.substring(idx + 1);
-        items.put(key, val);    
+        items.put(key + ":" + val, val);    
       }
       signature();
     } catch (IOException e) {
@@ -127,34 +96,8 @@ class FingerPrint implements IFingerPrint {
       throw e;
     }
   }
+  
+  abstract void update(Patch patch, String input, File output);
 
-  @Override
-  public Optional<IPatch> patch(IFingerPrint to) {
-    if (!(to instanceof FingerPrint))
-      return Optional.empty();
-
-    Patch patch = new Patch();
-    final FingerPrint target = (FingerPrint)to;
-
-    items.forEach((myHash, myOrigin) -> {
-      String otherFile = target.items.get(myHash);
-      if (otherFile == null) {        
-        patch.delete(new File(basePath, myOrigin));
-      }
-    });
-    
-    target.items.forEach((targetHash, targetFile) -> {
-      String myPath = items.get(targetHash);
-      if (myPath == null) {
-        File output = new File(basePath, targetFile);
-        if (targetHash.startsWith("directory")) {
-          patch.mkdir(output);
-        } else {
-          patch.copy(new File(target.basePath, targetFile), output);
-        }
-      }
-    });
-     
-    return patch.asOptional();
-  }
+  abstract void remoteUpdate(IDownloader downloader, Patch patch, String input, String output);
 }

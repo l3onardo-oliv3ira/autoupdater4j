@@ -29,9 +29,12 @@ package com.github.autoupdate4j.imp;
 import java.io.File;
 import java.io.IOException;
 
-public class HttpUpdater extends DefaulUpdater {
+public class LocalUpdater extends DefaulUpdater {
 
-  public HttpUpdater(File older, String newer) throws IOException {
-    super(new TreeScanner(older), new HttpScanner(newer));
+  public LocalUpdater(File older, File newer) throws IOException {
+    super(
+      new TreeScanner(older), 
+      new TreeScanner(newer)
+    );
   }
 }

@@ -27,19 +27,20 @@
 package com.github.autoupdate4j.imp;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import com.github.autoupdate4j.IPatch;
-import com.github.progress4j.IProgress;
-import com.github.progress4j.imp.Stage;
-import com.github.utils4j.imp.function.Executable;
+import com.github.progress4j.IProgressView;
+import com.github.utils4j.IDownloader;
 
 class Patch implements IPatch {
-
+  
   private final List<Command> cmds = new LinkedList<>();
+  
+  Patch() {
+  }
   
   final void delete(File file) {
     cmds.add(new Delete(file));
@@ -53,18 +54,36 @@ class Patch implements IPatch {
     cmds.add(new Mkdir(output));
   }
   
+  final void download(IDownloader downloader, String uri, File output) {
+    cmds.add(new Download(downloader, uri, output));
+  }
+
+  final void upload(IDownloader downloader, File file, String output) {
+    notImplemented("upload");
+  }
+  
+  final void remoteDelete(IDownloader downloader, String myOrigin) {
+    notImplemented("remoteDelete");
+  }
+  
+  final void remoteMkdir(IDownloader downloader, String output) {
+    notImplemented("remoteMkdir");
+  }
+  
+  final void notImplemented(String command) {
+    cmds.add(new NotImplemented(command));
+  }
+
   final Optional<IPatch> asOptional() {
     return cmds.isEmpty() ? Optional.empty() : Optional.of(this);
   }
   
   @Override
-  public void apply(IProgress progress) throws Exception {
-    progress.begin(new Stage("Aplicando o patch"), cmds.size());
-    for(Executable<IOException> e: cmds) {
-      String step = e.toString();
-      System.out.println(step);
-      progress.step(step);
-      e.execute();
+  public void apply(IProgressView progress) throws Exception {
+    progress.begin("Aplicando o patch", cmds.size());
+    for(Command cmd: cmds) {
+      progress.step(cmd.toString());
+      cmd.run(progress);
     }
     progress.end();
   }

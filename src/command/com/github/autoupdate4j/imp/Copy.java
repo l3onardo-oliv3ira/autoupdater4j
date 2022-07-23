@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import com.github.progress4j.IProgressView;
 import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Directory;
 
@@ -50,7 +51,7 @@ final class Copy extends InputAware {
   }
 
   @Override
-  public final void execute() throws IOException {
+  public final void run(IProgressView progress) throws IOException {
     Directory.mkDir(output.getParentFile());
     Files.copy(input.toPath(), output.toPath(), REPLACE_EXISTING);
     Directory.requireExists(output, "Unabled to " + this);

@@ -33,7 +33,7 @@ import java.util.Optional;
 public interface IFingerPrint {
   String getId();  
   
-  Optional<IPatch> patch(IFingerPrint to);
+  Optional<IPatch> patch(IFingerPrint target);
   
   void readFrom(File input) throws IOException;
   

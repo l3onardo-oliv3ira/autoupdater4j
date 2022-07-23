@@ -28,41 +28,24 @@ package com.github.autoupdate4j.imp;
 
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.util.Optional;
 
 import com.github.autoupdate4j.IFingerPrint;
+import com.github.autoupdate4j.IPatch;
 import com.github.autoupdate4j.IScanner;
 import com.github.autoupdate4j.IUpdater;
-import com.github.progress4j.IProgress;
 import com.github.progress4j.IProgressFactory;
 import com.github.progress4j.IProgressView;
-import com.github.progress4j.IStage;
 import com.github.progress4j.imp.ProgressFactory;
-import com.github.utils4j.gui.imp.AlertDialog;
+import com.github.utils4j.gui.imp.ExceptionAlert;
 import com.github.utils4j.imp.Args;
 
 public class DefaulUpdater implements IUpdater {
 
   private static final IProgressFactory FACTORY = new ProgressFactory();
   
-  private static enum Stage implements IStage {
-    
-    UPDATING("Atualizando a aplicação"),
-    
-    SCANNING("Calculando impressão digital (seja paciente)");
-
-    private final String message;
-    
-    Stage(String message) {
-      this.message = message;
-    }
-    
-    @Override
-    public String toString() {
-      return message;
-    }
-  }
-  
   protected final IScanner older;
+  
   protected final IScanner newer;
 
   public DefaulUpdater(IScanner older, IScanner newer) {
@@ -71,36 +54,40 @@ public class DefaulUpdater implements IUpdater {
   }
   
   @Override
-  public void update() {
+  public boolean update() {
     IProgressView progress = FACTORY.get();
+    boolean success = false;
     try {
       progress.display();
-      progress.begin(Stage.UPDATING);
-      
-      doUpdate(progress);
-      
+      progress.begin("Atualizando aplicação");
+      success = doUpdate(progress);
       progress.end();
     } catch (Exception e) {
-      e.printStackTrace();
+      handleException(e);
     } finally {
       progress.undisplay();
       progress.dispose();
     }   
+    return success;
   }
 
-  protected void doUpdate(IProgress progress) throws IOException, InterruptedException {
+  protected void handleException(Exception e) {
+    ExceptionAlert.show("Exceção inesperada", e);
+  }
+
+  protected boolean doUpdate(IProgressView progress) throws IOException, InterruptedException {
     
-    progress.begin(Stage.SCANNING);
-    
-    progress.info("Local scanning...");    
-    IFingerPrint oldFp = older.scan(progress);
-    String oldId = oldFp.getId();    
-    progress.info("Impressão digital local: %s", oldId);
+    progress.begin("Calculando impressão digital (seja paciente)");
     
     progress.info("Remote scanning...");
     IFingerPrint newFp = newer.scan(progress);
     String newId = newFp.getId();
     progress.info("Impressão digital remota: %s", newId);
+
+    progress.info("Local scanning...");    
+    IFingerPrint oldFp = older.scan(progress);
+    String oldId = oldFp.getId();    
+    progress.info("Impressão digital local: %s", oldId);
     
     progress.end();
     
@@ -108,10 +95,15 @@ public class DefaulUpdater implements IUpdater {
     
     if (notModified) {
       Toolkit.getDefaultToolkit().beep();
-      AlertDialog.info("Não há diferenças entre a instalação atual e a mais nova.");      
-      return;
+      return true;
     }
-
-    oldFp.patch(newFp).ifPresent(new Patcher(progress)::apply);
+    
+    Optional<IPatch> patch = oldFp.patch(newFp);
+    if (!patch.isPresent()) {
+      Toolkit.getDefaultToolkit().beep();
+      return true;
+    }
+    
+    return new Patcher(progress).apply(patch.get());
   }
 }

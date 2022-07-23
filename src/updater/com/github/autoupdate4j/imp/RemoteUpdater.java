@@ -29,9 +29,35 @@ package com.github.autoupdate4j.imp;
 import java.io.File;
 import java.io.IOException;
 
-public class TreeUpdater extends DefaulUpdater {
+import com.github.utils4j.IDownloader;
+import com.github.utils4j.gui.imp.AlertDialog;
+import com.github.utils4j.gui.imp.ExceptionAlert;
 
-  public TreeUpdater(File older, File newer) throws IOException {
-    super(new TreeScanner(older), new TreeScanner(newer));
+public class RemoteUpdater extends DefaulUpdater {
+
+  public RemoteUpdater(IDownloader downloader, File older, String rootUri) throws IOException {
+    super(
+      new TreeScanner(older),
+      new HttpScanner(downloader, rootUri)
+    );
+  }
+  
+  protected void handleException(Exception e) {
+    if (e instanceof DownloadFailException) {
+      ExceptionAlert.show("Não foi possível acessar o endereço de atualização", e);
+      return;
+    }
+    
+    if (e instanceof UnavailableUpdateException) {
+      AlertDialog.info("Não há atualização disponível!");
+      return;
+    }
+    
+    if (e instanceof FingerPrintLoadException) {
+      ExceptionAlert.show("Não foi possível carregar impressão digital da atualização.", e);
+      return;
+    }
+    
+    super.handleException(e);;
   }
 }

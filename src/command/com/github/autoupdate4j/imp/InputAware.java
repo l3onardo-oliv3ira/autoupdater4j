@@ -27,17 +27,14 @@
 package com.github.autoupdate4j.imp;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.function.Executable;
 
-abstract class InputAware extends Command implements Executable<IOException> {
+abstract class InputAware implements Command {
 
   protected final File input;
   
   protected InputAware(File input) {
     this.input = Args.requireNonNull(input, "input is null");
   } 
-  
 }
