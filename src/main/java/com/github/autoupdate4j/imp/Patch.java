@@ -70,7 +70,11 @@ class Patch implements IPatch {
     notImplemented("remoteMkdir");
   }
   
-  final void notImplemented(String command) {
+  final void remoteUpdate(String string) {
+    notImplemented("remoteUpdate");
+  }
+
+  private void notImplemented(String command) {
     cmds.add(new NotImplemented(command));
   }
 
@@ -87,6 +91,7 @@ class Patch implements IPatch {
     }
     progress.end();
   }
+
 }
 
 

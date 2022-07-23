@@ -53,15 +53,15 @@ class RemoteFingerPrint extends FingerPrint {
     
     final FingerPrint target = (FingerPrint)to;
 
-    items.forEach((myHash, myOrigin) -> {
-      String otherFile = target.items.get(myHash);
+    this.forEach((myHash, myOrigin) -> {
+      String otherFile = target.get(myHash);
       if (otherFile == null) {        
         patch.remoteDelete(downloader, myOrigin);
       }
     });
     
-    target.items.forEach((targetHash, targetFile) -> {
-      String myPath = items.get(targetHash);
+    target.forEach((targetHash, targetFile) -> {
+      String myPath = this.get(targetHash);
       if (myPath == null) {
         String output = targetFile;
         if (targetHash.startsWith("directory")) {
@@ -76,13 +76,12 @@ class RemoteFingerPrint extends FingerPrint {
   }
   
   @Override
-  void update(Patch patch, String input, File output) {
+  final void update(Patch patch, String input, File output) {
     patch.download(downloader, input, output);
   }
 
   @Override
-  void remoteUpdate(IDownloader downloader, Patch patch, String input, String output) {
-    //download from input and upload to output
-    patch.notImplemented("Both remote finger print");
+  final void remoteUpdate(IDownloader downloader, Patch patch, String input, String output) {
+    patch.remoteUpdate("remoteUpdate");
   }
 }

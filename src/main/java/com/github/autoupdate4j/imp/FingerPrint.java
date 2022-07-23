@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import com.github.autoupdate4j.IFingerPrint;
 import com.github.utils4j.IDownloader;
@@ -46,7 +47,7 @@ abstract class FingerPrint implements IFingerPrint {
 
   private String id = "";
 
-  protected final Map<String, String> items = new HashMap<>();
+  private final Map<String, String> items = new HashMap<>();
 
   protected FingerPrint() {
   }
@@ -60,6 +61,18 @@ abstract class FingerPrint implements IFingerPrint {
   public final String getId() {
     return id;
   }  
+  
+  protected final void put(String key, String value) {
+    items.put(key + ":" + value, value);
+  }
+  
+  protected final String get(String key) {
+    return items.get(key);
+  }
+  
+  protected final void forEach(BiConsumer<String, String> action) {
+    items.forEach(action);
+  }
   
   final boolean ready() {
     return !id.isEmpty();
@@ -88,7 +101,7 @@ abstract class FingerPrint implements IFingerPrint {
         int idx = line.indexOf(':');
         String key = line.substring(0, idx);
         String val = line.substring(idx + 1);
-        items.put(key + ":" + val, val);    
+        put(key, val);
       }
       signature();
     } catch (IOException e) {

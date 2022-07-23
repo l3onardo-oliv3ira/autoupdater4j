@@ -64,8 +64,7 @@ class TreeFingerPrint extends FingerPrint {
     String suffixPath = canonical.substring(length);
     String relative = replace(suffixPath, '\\', '/');
     String hashFile = file.isDirectory() ? "directory" : sha1(file);
-    String hashId = hashFile + ":" + relative;
-    items.put(hashId, relative);    
+    put(hashFile, relative);
   }
   
   public Optional<IPatch> patch(IFingerPrint to) {
@@ -76,15 +75,15 @@ class TreeFingerPrint extends FingerPrint {
     
     final FingerPrint target = (FingerPrint)to;
 
-    items.forEach((myHash, myOrigin) -> {
-      String otherFile = target.items.get(myHash);
+    this.forEach((myHash, myOrigin) -> {
+      String otherFile = target.get(myHash);
       if (otherFile == null) {        
         patch.delete(new File(rootPath, myOrigin));
       }
     });
     
-    target.items.forEach((targetHash, targetFile) -> {
-      String myPath = items.get(targetHash);
+    target.forEach((targetHash, targetFile) -> {
+      String myPath = this.get(targetHash);
       if (myPath == null) {
         File output = new File(rootPath, targetFile);
         if (targetHash.startsWith("directory")) {
