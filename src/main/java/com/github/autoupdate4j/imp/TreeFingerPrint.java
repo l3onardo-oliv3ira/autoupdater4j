@@ -31,7 +31,6 @@ import static com.github.utils4j.imp.Strings.replace;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 import com.github.autoupdate4j.IFingerPrint;
 import com.github.autoupdate4j.IPatch;
@@ -63,14 +62,16 @@ class TreeFingerPrint extends FingerPrint {
     String canonical = file.getCanonicalPath();
     String suffixPath = canonical.substring(length);
     String relative = replace(suffixPath, '\\', '/');
-    String hashFile = file.isDirectory() ? "directory" : sha1(file);
+    String hashFile = file.isDirectory() ? DIRECTORY_KEY : sha1(file);
     put(hashFile, relative);
   }
   
-  public Optional<IPatch> patch(IFingerPrint to) {
-    if (!(to instanceof FingerPrint))
-      return Optional.empty();
+  @Override
+  public final IPatch patch(IFingerPrint to) {
     
+    if (!(to instanceof FingerPrint))
+      return Patch.NOTHING;
+
     Patch patch = new Patch();
     
     final FingerPrint target = (FingerPrint)to;
@@ -94,7 +95,7 @@ class TreeFingerPrint extends FingerPrint {
       }
     });
      
-    return patch.asOptional();
+    return patch;
   }
   
   @Override

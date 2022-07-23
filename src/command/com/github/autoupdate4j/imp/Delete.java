@@ -44,7 +44,7 @@ final class Delete extends InputAware {
   }
 
   @Override
-  public final void run(IProgressView progress) throws IOException {
+  public final void handle(IProgressView progress) throws IOException {
     if (!input.exists())
       return;
     if (input.isDirectory()) {
@@ -52,7 +52,8 @@ final class Delete extends InputAware {
       return;
     }
     if (!input.delete()) {
-      throw new IOException("Unabled to delete " + input);
+      throw new IOException("Não foi possível deletar " + input + 
+        ". Arquivo aberto por outra aplicação!?");
     }
     Directory.requireNotExists(input, "Unabled to " + this);
   }

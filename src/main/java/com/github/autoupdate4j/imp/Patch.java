@@ -37,6 +37,8 @@ import com.github.utils4j.IDownloader;
 
 class Patch implements IPatch {
   
+  public static final IPatch NOTHING = p -> {};
+  
   private final List<Command> cmds = new LinkedList<>();
   
   Patch() {
@@ -78,16 +80,12 @@ class Patch implements IPatch {
     cmds.add(new NotImplemented(command));
   }
 
-  final Optional<IPatch> asOptional() {
-    return cmds.isEmpty() ? Optional.empty() : Optional.of(this);
-  }
-  
   @Override
   public void apply(IProgressView progress) throws Exception {
-    progress.begin("Aplicando o patch", cmds.size());
+    progress.begin("Aplicando o patch de atualização", cmds.size());
     for(Command cmd: cmds) {
       progress.step(cmd.toString());
-      cmd.run(progress);
+      cmd.handle(progress);
     }
     progress.end();
   }

@@ -28,7 +28,6 @@ package com.github.autoupdate4j.imp;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 import com.github.autoupdate4j.IFingerPrint;
 import com.github.autoupdate4j.IPatch;
@@ -45,9 +44,9 @@ class RemoteFingerPrint extends FingerPrint {
   }
 
   @Override
-  public Optional<IPatch> patch(IFingerPrint to) {
+  public final IPatch patch(IFingerPrint to) {
     if (!(to instanceof FingerPrint))
-      return Optional.empty();
+      return Patch.NOTHING;
     
     Patch patch = new Patch();
     
@@ -72,7 +71,7 @@ class RemoteFingerPrint extends FingerPrint {
       }
     });
      
-    return patch.asOptional();
+    return patch;
   }
   
   @Override

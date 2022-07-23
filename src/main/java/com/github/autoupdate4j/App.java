@@ -40,28 +40,38 @@ import org.apache.hc.core5.util.Timeout;
 
 import com.github.autoupdate4j.imp.LocalUpdater;
 import com.github.autoupdate4j.imp.RemoteUpdater;
+import com.github.autoupdate4j.imp.TreeScanner;
+import com.github.progress4j.imp.ProgressOptions;
 import com.github.utils4j.imp.Downloader;
 
 public class App {
 
   public static void main(String[] args) throws IOException, InterruptedException {
     final File older = new File("D:\\temp\\comparacaoUPDATE\\PjeOffice PRO");
-    localUpdate(older);
-    remoteUpdate(older);
+    final File newer = new File("D:\\temp\\comparacaoUPDATE\\PjeOffice PRO New Version");
+    localUpdate(older, newer);
+    remoteUpdate(older, newer);
   }
 
-  private static void localUpdate(File older) throws IOException {
-    final File newer = new File("D:\\temp\\comparacaoUPDATE\\PjeOffice PRO New Version");
+  private static void localUpdate(File older, File newer) throws IOException {
     IUpdater lup = new LocalUpdater(older, newer);
     lup.update();
   }
 
-  private static void remoteUpdate(File older) throws IOException {
-    String remoteUri = "http://update.pjeoffice-pro.fakeaddress";
+  private static void remoteUpdate(File older, File newer) throws IOException {
+    createFingerPrint(newer);
+    String rootUri   = "http://192.168.56.1:8080";
     try(CloseableHttpClient client = buildClient()) {
-      IUpdater rup = new RemoteUpdater(new Downloader(client), older, remoteUri);
+      IUpdater rup = new RemoteUpdater(new Downloader(rootUri, client), older, "/pjeoffice-pro.fp");
       rup.update();
     }
+  }
+
+  private static void createFingerPrint(File newer) throws IOException {
+    File fingerPrint = new File(newer, "pjeoffice-pro.fp");
+    fingerPrint.delete();
+    IScanner scanner = new TreeScanner(newer);
+    scanner.scan(ProgressOptions.IDLE).writeTo(fingerPrint);
   }
 
   private static CloseableHttpClient buildClient() {

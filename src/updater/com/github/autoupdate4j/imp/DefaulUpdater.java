@@ -26,9 +26,7 @@
 
 package com.github.autoupdate4j.imp;
 
-import java.awt.Toolkit;
 import java.io.IOException;
-import java.util.Optional;
 
 import com.github.autoupdate4j.IFingerPrint;
 import com.github.autoupdate4j.IPatch;
@@ -37,6 +35,7 @@ import com.github.autoupdate4j.IUpdater;
 import com.github.progress4j.IProgressFactory;
 import com.github.progress4j.IProgressView;
 import com.github.progress4j.imp.ProgressFactory;
+import com.github.utils4j.gui.imp.AlertDialog;
 import com.github.utils4j.gui.imp.ExceptionAlert;
 import com.github.utils4j.imp.Args;
 
@@ -68,10 +67,19 @@ public class DefaulUpdater implements IUpdater {
       progress.undisplay();
       progress.dispose();
     }   
+    if (success) {
+      AlertDialog.info("Atualização finalizada com sucesso!");
+    }
     return success;
   }
 
   protected void handleException(Exception e) {
+    
+    if (e instanceof ApplicationUpdatedException) {
+      AlertDialog.info("A aplicação já se encontra atualizada!");
+      return;
+    }
+    
     ExceptionAlert.show("Exceção inesperada", e);
   }
 
@@ -94,16 +102,11 @@ public class DefaulUpdater implements IUpdater {
     boolean notModified = oldId.equals(newId);
     
     if (notModified) {
-      Toolkit.getDefaultToolkit().beep();
-      return true;
+      throw new ApplicationUpdatedException();
     }
     
-    Optional<IPatch> patch = oldFp.patch(newFp);
-    if (!patch.isPresent()) {
-      Toolkit.getDefaultToolkit().beep();
-      return true;
-    }
+    IPatch diff = oldFp.patch(newFp);
     
-    return new Patcher(progress).apply(patch.get());
+    return new Patcher(progress).apply(diff);
   }
 }

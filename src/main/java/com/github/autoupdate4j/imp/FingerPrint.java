@@ -45,6 +45,8 @@ import com.github.utils4j.imp.Args;
 
 abstract class FingerPrint implements IFingerPrint {
 
+  protected static final String DIRECTORY_KEY = "directory";
+  
   private String id = "";
 
   private final Map<String, String> items = new HashMap<>();
@@ -96,11 +98,21 @@ abstract class FingerPrint implements IFingerPrint {
     Args.requireNonNull(input, "input is null");
     clear();
     try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
-      String line;
+      String errorMessage = "O formato do arquivo de impressão digital é inválido na linha: ";
+      String line; int ln = 0;
       while((line = reader.readLine()) != null) {
+        ln++;
         int idx = line.indexOf(':');
+        if (idx <= 0)
+          throw new IOException(errorMessage + ln);
+        
         String key = line.substring(0, idx);
+        if (key.length() != 40 && !DIRECTORY_KEY.equals(key))
+          throw new IOException(errorMessage + ln);
+        
         String val = line.substring(idx + 1);
+        if (val.isEmpty() && !DIRECTORY_KEY.equals(key))
+          throw new IOException(errorMessage + ln);
         put(key, val);
       }
       signature();

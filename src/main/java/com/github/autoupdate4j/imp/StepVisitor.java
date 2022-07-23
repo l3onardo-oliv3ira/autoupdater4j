@@ -36,7 +36,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import com.github.progress4j.IProgress;
 import com.github.progress4j.IStage;
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.function.Executable;
+import com.github.utils4j.imp.function.IExecutable;
 
 abstract class StepVisitor extends SimpleFileVisitor<Path> {
   
@@ -97,7 +97,7 @@ abstract class StepVisitor extends SimpleFileVisitor<Path> {
     checkIo(() -> progress.end());
   }
 
-  protected final void checkIo(Executable<Exception> method) throws IOException {
+  protected final void checkIo(IExecutable<Exception> method) throws IOException {
     try {
       method.execute();
     } catch (Exception e) {

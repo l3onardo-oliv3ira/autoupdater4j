@@ -14,7 +14,7 @@ final class NotImplemented implements Command {
   }
   
   @Override
-  public void run(IProgressView T) throws IOException {
+  public void handle(IProgressView T) throws IOException {
     throw new IOException(commandName + " not implemented yet");
   }
 }

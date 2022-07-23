@@ -28,12 +28,11 @@ package com.github.autoupdate4j;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 public interface IFingerPrint {
   String getId();  
   
-  Optional<IPatch> patch(IFingerPrint target);
+  IPatch patch(IFingerPrint target);
   
   void readFrom(File input) throws IOException;
   

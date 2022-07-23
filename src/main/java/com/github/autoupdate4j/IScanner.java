@@ -28,8 +28,13 @@ package com.github.autoupdate4j;
 
 import java.io.IOException;
 
-import com.github.progress4j.IProgress;
+import com.github.progress4j.IProgressView;
+import com.github.progress4j.imp.ProgressOptions;
 
 public interface IScanner {
-  IFingerPrint scan(IProgress progress) throws IOException;
+  default IFingerPrint scan() throws IOException {
+    return scan(ProgressOptions.IDLE);
+  }
+
+  IFingerPrint scan(IProgressView progress) throws IOException;
 }

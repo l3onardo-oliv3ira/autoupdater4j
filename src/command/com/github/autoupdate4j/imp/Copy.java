@@ -51,7 +51,7 @@ final class Copy extends InputAware {
   }
 
   @Override
-  public final void run(IProgressView progress) throws IOException {
+  public final void handle(IProgressView progress) throws IOException {
     Directory.mkDir(output.getParentFile());
     Files.copy(input.toPath(), output.toPath(), REPLACE_EXISTING);
     Directory.requireExists(output, "Unabled to " + this);

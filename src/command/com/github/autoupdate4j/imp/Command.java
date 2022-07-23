@@ -29,7 +29,7 @@ package com.github.autoupdate4j.imp;
 import java.io.IOException;
 
 import com.github.progress4j.IProgressView;
-import com.github.utils4j.imp.function.Runnable;
+import com.github.utils4j.imp.function.IHandler;
 
-interface Command extends Runnable<IProgressView, IOException> {
+interface Command extends IHandler<IProgressView, IOException> {
 }

@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import com.github.autoupdate4j.IFingerPrint;
 import com.github.autoupdate4j.IScanner;
 import com.github.progress4j.IProgress;
+import com.github.progress4j.IProgressView;
 import com.github.utils4j.imp.Args;
 
 public final class TreeScanner implements IScanner {
@@ -50,7 +51,7 @@ public final class TreeScanner implements IScanner {
   }
   
   @Override
-  public final IFingerPrint scan(IProgress progress) throws IOException {    
+  public final IFingerPrint scan(IProgressView progress) throws IOException {    
     Args.requireNonNull(progress, "progress is null");
     if (fp.ready())
       return fp;

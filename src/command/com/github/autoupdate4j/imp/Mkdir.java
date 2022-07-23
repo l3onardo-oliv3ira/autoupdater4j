@@ -44,7 +44,7 @@ final class Mkdir extends InputAware {
   }
   
   @Override
-  public final void run(IProgressView progress) throws IOException {
+  public final void handle(IProgressView progress) throws IOException {
     Directory.mkDir(input);
   }
 }
