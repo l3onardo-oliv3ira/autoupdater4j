@@ -106,6 +106,7 @@
 		                    <source>src/command</source>
 		                    <source>src/scanner</source>
 		                    <source>src/updater</source>
+		                    <source>src/exception</source>
 		                </sources>
 		            </configuration>
 		        </execution>
