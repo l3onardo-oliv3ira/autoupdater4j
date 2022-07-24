@@ -59,7 +59,7 @@ public class App {
   }
 
   private static void remoteUpdate(File older, File newer) throws IOException {
-    createFingerPrint(newer);
+   // createFingerPrint(newer);
     String rootUri   = "http://192.168.56.1:8080";
     try(CloseableHttpClient client = buildClient()) {
       IUpdater rup = new RemoteUpdater(new Downloader(rootUri, client), older, "/pjeoffice-pro.fp");

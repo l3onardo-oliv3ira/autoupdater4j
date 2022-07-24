@@ -74,30 +74,9 @@ public class DefaulUpdater implements IUpdater {
     return success;
   }
 
-  protected void handleException(Exception e) {
-    
-    if (e instanceof ApplicationAlreadyUpdatedException) {
-      AlertDialog.info("A aplicação já se encontra atualizada!");
-      return;
-    }
-    
-    if (e instanceof ApplicationUpdateFailException) {
-      ExceptionAlert.show("Não foi possível atualizar a aplicação!", e);
-      return;
-    }
-    
-    if (e instanceof InterruptedException || e instanceof CancelledOperationException) {
-      AlertDialog.info("A atualização foi cancelada!");
-      return;
-    }
-    
-    ExceptionAlert.show("Exceção inesperada", e);
-  }
-
   protected void doUpdate(IProgressView progress) throws IOException, InterruptedException {
-    
     progress.begin("Calculando impressão digital (seja paciente)");
-    
+
     progress.info("Remote scanning...");
     IFingerPrint newFp = newer.scan(progress);
     String newId = newFp.getId();
@@ -111,13 +90,31 @@ public class DefaulUpdater implements IUpdater {
     progress.end();
     
     boolean notModified = oldId.equals(newId);
-    
     if (notModified) {
       throw new ApplicationAlreadyUpdatedException();
     }
     
     IPatch diff = oldFp.patch(newFp);
-    
     new Patcher(progress).apply(diff);
   }
+  
+  protected void handleException(Exception e) {
+    if (e instanceof ApplicationAlreadyUpdatedException) {
+      AlertDialog.info("A aplicação já se encontra atualizada!");
+      return;
+    }
+
+    if (e instanceof ApplicationUpdateFailException) {
+      ExceptionAlert.show("Não foi possível atualizar a aplicação!", e);
+      return;
+    }
+    
+    if (e instanceof InterruptedException || e instanceof CancelledOperationException) {
+      AlertDialog.info("A atualização foi cancelada!");
+      return;
+    }
+    
+    ExceptionAlert.show("Exceção inesperada", e);
+  }
+
 }

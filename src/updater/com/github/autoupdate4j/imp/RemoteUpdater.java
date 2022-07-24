@@ -42,7 +42,6 @@ public class RemoteUpdater extends DefaulUpdater {
   }
   
   protected void handleException(Exception e) {
-
     if (e instanceof DownloadFailException) {
       ExceptionAlert.show("Não foi possível acessar o endereço de atualização", e);
       return;
