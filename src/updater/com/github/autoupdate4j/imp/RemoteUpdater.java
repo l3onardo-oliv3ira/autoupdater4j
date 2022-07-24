@@ -36,8 +36,8 @@ public class RemoteUpdater extends DefaulUpdater {
 
   public RemoteUpdater(IDownloader downloader, File older, String fingerPrint) throws IOException {
     super(
-      new TreeScanner(older),
-      new HttpScanner(downloader, fingerPrint)
+      new LocalScanner(older),
+      new RemoteScanner(downloader, fingerPrint)
     );
   }
   
@@ -48,18 +48,18 @@ public class RemoteUpdater extends DefaulUpdater {
       return;
     }
     
-    if (e instanceof UndefinedUpdateException) {
-      ExceptionAlert.show("Não foi possível determinar se há ou não uma nova "
-          + "versão do aplicativo!\n"
-          + " O repositório de atualização encontra-se inacessível ou em formato inválido.", e);
-      return;
-    }
-    
-    if (e instanceof FingerPrintLoadException) {
+    if (e instanceof FingerPrintLoadingException) {
       ExceptionAlert.show("Não foi possível carregar impressão digital da atualização.", e);
       return;
     }
     
+    if (e instanceof UndefinedUpdateException) {
+      ExceptionAlert.show("Não foi possível determinar se há ou não uma nova "
+          + "versão do aplicativo!\n O repositório de atualização encontra-se "
+          + "inacessível ou em formato inválido.", e);
+      return;
+    }
+
     super.handleException(e);
   }
 }

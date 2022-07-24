@@ -100,7 +100,9 @@ abstract class StepVisitor extends SimpleFileVisitor<Path> {
   protected final void checkIo(IExecutable<Exception> method) throws IOException {
     try {
       method.execute();
-    } catch (Exception e) {
+    } catch (InterruptedException e) {
+      throw new CancelledOperationException(e);
+    } catch (Exception e) { 
       throw new IOException(e);
     }
   }

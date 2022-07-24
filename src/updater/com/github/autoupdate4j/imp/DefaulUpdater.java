@@ -59,7 +59,8 @@ public class DefaulUpdater implements IUpdater {
     try {
       progress.display();
       progress.begin("Atualizando aplicação");
-      success = doUpdate(progress);
+      doUpdate(progress);
+      success = true;
       progress.end();
     } catch (Exception e) {
       handleException(e);
@@ -75,15 +76,25 @@ public class DefaulUpdater implements IUpdater {
 
   protected void handleException(Exception e) {
     
-    if (e instanceof ApplicationUpdatedException) {
+    if (e instanceof ApplicationAlreadyUpdatedException) {
       AlertDialog.info("A aplicação já se encontra atualizada!");
+      return;
+    }
+    
+    if (e instanceof ApplicationUpdateFailException) {
+      ExceptionAlert.show("Não foi possível atualizar a aplicação!", e);
+      return;
+    }
+    
+    if (e instanceof InterruptedException || e instanceof CancelledOperationException) {
+      AlertDialog.info("A atualização foi cancelada!");
       return;
     }
     
     ExceptionAlert.show("Exceção inesperada", e);
   }
 
-  protected boolean doUpdate(IProgressView progress) throws IOException, InterruptedException {
+  protected void doUpdate(IProgressView progress) throws IOException, InterruptedException {
     
     progress.begin("Calculando impressão digital (seja paciente)");
     
@@ -102,11 +113,11 @@ public class DefaulUpdater implements IUpdater {
     boolean notModified = oldId.equals(newId);
     
     if (notModified) {
-      throw new ApplicationUpdatedException();
+      throw new ApplicationAlreadyUpdatedException();
     }
     
     IPatch diff = oldFp.patch(newFp);
     
-    return new Patcher(progress).apply(diff);
+    new Patcher(progress).apply(diff);
   }
 }

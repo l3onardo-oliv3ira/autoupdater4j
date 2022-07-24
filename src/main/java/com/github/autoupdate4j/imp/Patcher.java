@@ -26,6 +26,8 @@
 
 package com.github.autoupdate4j.imp;
 
+import java.io.IOException;
+
 import com.github.autoupdate4j.IPatch;
 import com.github.autoupdate4j.IPatcher;
 import com.github.progress4j.IProgressView;
@@ -40,19 +42,18 @@ class Patcher implements IPatcher {
   }
   
   @Override
-  public final boolean apply(IPatch p) {
+  public final void apply(IPatch p) throws IOException {
     try {
       backupAquire();
       p.apply(progress);
       backupRelease();
-      return true;
     } catch (Exception fail) {
       try {
         backupRestore(fail);
       }catch(Throwable unexpected) {
         handleCorruptedApp();
       }
-      return false;
+      throw new ApplicationUpdateFailException(fail);
     }    
   }
 

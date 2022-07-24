@@ -29,7 +29,6 @@ package com.github.autoupdate4j.imp;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import com.github.autoupdate4j.IPatch;
 import com.github.progress4j.IProgressView;
@@ -48,16 +47,16 @@ class Patch implements IPatch {
     cmds.add(new Delete(file));
   }
 
-  final void copy(File from, File to) {
-    cmds.add(new Copy(from, to));
+  final void copy(File from, File to, String hash) {
+    cmds.add(new Copy(from, to, hash));
   }
   
   final void mkdir(File output) {
     cmds.add(new Mkdir(output));
   }
   
-  final void download(IDownloader downloader, String uri, File output) {
-    cmds.add(new Download(downloader, uri, output));
+  final void download(IDownloader downloader, String uri, File output, String hash) {
+    cmds.add(new Download(downloader, uri, output, hash));
   }
 
   final void upload(IDownloader downloader, File file, String output) {

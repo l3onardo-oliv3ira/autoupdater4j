@@ -65,7 +65,15 @@ abstract class FingerPrint implements IFingerPrint {
   }  
   
   protected final void put(String key, String value) {
-    items.put(key + ":" + value, value);
+    items.put(keyPath(key, value), value);
+  }
+  
+  protected static String keyPath(String key, String path) {
+    return key + ":" + path;
+  }
+  
+  protected static String hashOf(String keyPath) {
+    return keyPath.substring(0, keyPath.indexOf(':')); 
   }
   
   protected final String get(String key) {
@@ -122,7 +130,7 @@ abstract class FingerPrint implements IFingerPrint {
     }
   }
   
-  abstract void update(Patch patch, String input, File output);
+  abstract void update(Patch patch, String input, File output, String hash);
 
   abstract void remoteUpdate(IDownloader downloader, Patch patch, String input, String output);
 }

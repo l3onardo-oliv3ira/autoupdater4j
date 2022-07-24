@@ -37,16 +37,16 @@ import com.github.progress4j.IProgress;
 import com.github.progress4j.IProgressView;
 import com.github.utils4j.imp.Args;
 
-public final class TreeScanner implements IScanner {
+public final class LocalScanner implements IScanner {
 
-  private TreeFingerPrint fp;
+  private LocalFingerPrint fp;
   
-  public TreeScanner(File root) throws IOException {
+  public LocalScanner(File root) throws IOException {
     reset(root);
   }
   
   final IScanner reset(File root) throws IOException {
-    this.fp = new TreeFingerPrint(root);
+    this.fp = new LocalFingerPrint(root);
     return this;
   }
   

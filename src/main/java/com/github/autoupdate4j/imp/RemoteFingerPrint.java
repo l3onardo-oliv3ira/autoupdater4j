@@ -75,8 +75,8 @@ class RemoteFingerPrint extends FingerPrint {
   }
   
   @Override
-  final void update(Patch patch, String input, File output) {
-    patch.download(downloader, input, output);
+  final void update(Patch patch, String input, File output, String hash) {
+    patch.download(downloader, input, output, hash);
   }
 
   @Override

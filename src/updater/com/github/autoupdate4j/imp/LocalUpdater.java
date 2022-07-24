@@ -33,8 +33,8 @@ public class LocalUpdater extends DefaulUpdater {
 
   public LocalUpdater(File older, File newer) throws IOException {
     super(
-      new TreeScanner(older), 
-      new TreeScanner(newer)
+      new LocalScanner(older), 
+      new LocalScanner(newer)
     );
   }
 }

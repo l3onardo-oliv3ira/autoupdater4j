@@ -27,5 +27,5 @@
 package com.github.autoupdate4j;
 
 public interface IPatcher {
-  boolean apply(IPatch patch) throws Exception;
+  void apply(IPatch patch) throws Exception;
 }

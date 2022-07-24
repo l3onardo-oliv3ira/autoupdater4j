@@ -40,7 +40,7 @@ import org.apache.hc.core5.util.Timeout;
 
 import com.github.autoupdate4j.imp.LocalUpdater;
 import com.github.autoupdate4j.imp.RemoteUpdater;
-import com.github.autoupdate4j.imp.TreeScanner;
+import com.github.autoupdate4j.imp.LocalScanner;
 import com.github.progress4j.imp.ProgressOptions;
 import com.github.utils4j.imp.Downloader;
 
@@ -49,7 +49,7 @@ public class App {
   public static void main(String[] args) throws IOException, InterruptedException {
     final File older = new File("D:\\temp\\comparacaoUPDATE\\PjeOffice PRO");
     final File newer = new File("D:\\temp\\comparacaoUPDATE\\PjeOffice PRO New Version");
-    localUpdate(older, newer);
+    //localUpdate(older, newer);
     remoteUpdate(older, newer);
   }
 
@@ -70,7 +70,7 @@ public class App {
   private static void createFingerPrint(File newer) throws IOException {
     File fingerPrint = new File(newer, "pjeoffice-pro.fp");
     fingerPrint.delete();
-    IScanner scanner = new TreeScanner(newer);
+    IScanner scanner = new LocalScanner(newer);
     scanner.scan(ProgressOptions.IDLE).writeTo(fingerPrint);
   }
 

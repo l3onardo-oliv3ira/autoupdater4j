@@ -37,13 +37,13 @@ import com.github.autoupdate4j.IPatch;
 import com.github.utils4j.IDownloader;
 import com.github.utils4j.imp.Directory;
 
-class TreeFingerPrint extends FingerPrint {
+class LocalFingerPrint extends FingerPrint {
   
   private int length;
   
   private File rootPath;
   
-  TreeFingerPrint(File rootPath) throws IOException {
+  LocalFingerPrint(File rootPath) throws IOException {
     reset(rootPath);
   }
 
@@ -90,7 +90,7 @@ class TreeFingerPrint extends FingerPrint {
         if (targetHash.startsWith("directory")) {
           patch.mkdir(output);
         } else {
-          target.update(patch, targetFile, output);
+          target.update(patch, targetFile, output, hashOf(targetHash));
         } 
       }
     });
@@ -99,8 +99,8 @@ class TreeFingerPrint extends FingerPrint {
   }
   
   @Override
-  final void update(Patch patch, String input, File output) {
-    patch.copy(new File(rootPath, input), output);
+  final void update(Patch patch, String input, File output, String hash) {
+    patch.copy(new File(rootPath, input), output, hash);
   }
 
   @Override

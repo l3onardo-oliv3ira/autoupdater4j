@@ -14,11 +14,11 @@ import com.github.utils4j.imp.DownloaderAware;
 
 import io.reactivex.disposables.Disposable;
 
-final class HttpScanner extends DownloaderAware implements IScanner {
+final class RemoteScanner extends DownloaderAware implements IScanner {
 
   private final String fingerPrint;
 
-  public HttpScanner(IDownloader downloader, String fingerPrint) {
+  public RemoteScanner(IDownloader downloader, String fingerPrint) {
     super(downloader);
     this.fingerPrint = Args.requireNonNull(fingerPrint, "rootUri is null");
   }
@@ -49,7 +49,7 @@ final class HttpScanner extends DownloaderAware implements IScanner {
     try {
       return new RemoteFingerPrint(downloader, temp);
     } catch (IOException e) {
-      throw new FingerPrintLoadException(e);
+      throw new FingerPrintLoadingException(e);
     } finally {
       temp.delete();
     }
