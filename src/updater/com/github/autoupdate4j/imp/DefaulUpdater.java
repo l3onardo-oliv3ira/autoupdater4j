@@ -110,7 +110,7 @@ public class DefaulUpdater implements IUpdater {
     }
     
     if (e instanceof InterruptedException || e instanceof CancelledOperationException) {
-      AlertDialog.info("A atualização foi cancelada!");
+      AlertDialog.warning("A atualização foi cancelada!");
       return;
     }
     

@@ -38,9 +38,9 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner;
 import org.apache.hc.core5.util.Timeout;
 
+import com.github.autoupdate4j.imp.LocalScanner;
 import com.github.autoupdate4j.imp.LocalUpdater;
 import com.github.autoupdate4j.imp.RemoteUpdater;
-import com.github.autoupdate4j.imp.LocalScanner;
 import com.github.progress4j.imp.ProgressOptions;
 import com.github.utils4j.imp.Downloader;
 
@@ -82,6 +82,7 @@ public class App {
     builder.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
       .evictExpiredConnections()
       .evictIdleConnections(_1m)
+      .setUserAgent("AutoUpdater4j")
       .setDefaultRequestConfig(RequestConfig.custom()
         .setResponseTimeout(_30s)
         .setConnectTimeout(_3m)    
