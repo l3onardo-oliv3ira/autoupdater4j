@@ -34,14 +34,14 @@ import com.github.autoupdate4j.IScanner;
 import com.github.autoupdate4j.IUpdater;
 import com.github.progress4j.IProgressFactory;
 import com.github.progress4j.IProgressView;
-import com.github.progress4j.imp.ProgressFactory;
+import com.github.progress4j.imp.SimpleProgressFactory;
 import com.github.utils4j.gui.imp.AlertDialog;
 import com.github.utils4j.gui.imp.ExceptionAlert;
 import com.github.utils4j.imp.Args;
 
 public class DefaulUpdater implements IUpdater {
 
-  private static final IProgressFactory FACTORY = new ProgressFactory();
+  private static final IProgressFactory FACTORY = new SimpleProgressFactory();
   
   protected final IScanner older;
   
@@ -77,15 +77,15 @@ public class DefaulUpdater implements IUpdater {
   protected void doUpdate(IProgressView progress) throws IOException, InterruptedException {
     progress.begin("Calculando impressão digital (seja paciente)");
 
-    progress.info("Remote scanning...");
+    progress.info("Newer scanning...");
     IFingerPrint newFp = newer.scan(progress);
     String newId = newFp.getId();
-    progress.info("Impressão digital remota: %s", newId);
+    progress.info("Impressão digital mais nova: %s", newId);
 
-    progress.info("Local scanning...");    
+    progress.info("Older scanning...");    
     IFingerPrint oldFp = older.scan(progress);
     String oldId = oldFp.getId();    
-    progress.info("Impressão digital local: %s", oldId);
+    progress.info("Impressão digital mais antiga: %s", oldId);
     
     progress.end();
     
@@ -95,6 +95,7 @@ public class DefaulUpdater implements IUpdater {
     }
     
     IPatch diff = oldFp.patch(newFp);
+    
     new Patcher(progress).apply(diff);
   }
   

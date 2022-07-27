@@ -75,6 +75,6 @@ class Patcher implements IPatcher {
   }
   
   protected void handleCorruptedApp() {
-
+    //phudeu!
   }
 }
