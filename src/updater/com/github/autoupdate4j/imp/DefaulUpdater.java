@@ -34,14 +34,14 @@ import com.github.autoupdate4j.IScanner;
 import com.github.autoupdate4j.IUpdater;
 import com.github.progress4j.IProgressFactory;
 import com.github.progress4j.IProgressView;
-import com.github.progress4j.imp.SimpleProgressFactory;
+import com.github.progress4j.imp.ProgressFrameFactory;
 import com.github.utils4j.gui.imp.AlertDialog;
 import com.github.utils4j.gui.imp.ExceptionAlert;
 import com.github.utils4j.imp.Args;
 
 public class DefaulUpdater implements IUpdater {
 
-  private static final IProgressFactory FACTORY = new SimpleProgressFactory();
+  private static final IProgressFactory FACTORY = new ProgressFrameFactory();
   
   protected final IScanner older;
   
