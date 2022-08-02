@@ -29,11 +29,11 @@ package com.github.autoupdate4j;
 import java.io.IOException;
 
 import com.github.progress4j.IProgressView;
-import com.github.progress4j.imp.ProgressOptions;
+import com.github.progress4j.imp.ProgressIdle;
 
 public interface IScanner {
   default IFingerPrint scan() throws IOException {
-    return scan(ProgressOptions.IDLE);
+    return scan(ProgressIdle.INSTANCE);
   }
 
   IFingerPrint scan(IProgressView progress) throws IOException;

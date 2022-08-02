@@ -41,7 +41,7 @@ import org.apache.hc.core5.util.Timeout;
 import com.github.autoupdate4j.imp.LocalScanner;
 import com.github.autoupdate4j.imp.LocalUpdater;
 import com.github.autoupdate4j.imp.RemoteUpdater;
-import com.github.progress4j.imp.ProgressOptions;
+import com.github.progress4j.imp.ProgressIdle;
 import com.github.utils4j.imp.Downloader;
 
 public class App {
@@ -71,7 +71,7 @@ public class App {
     File fingerPrint = new File(newer, "pjeoffice-pro.fp");
     fingerPrint.delete();
     IScanner scanner = new LocalScanner(newer);
-    scanner.scan(ProgressOptions.IDLE).writeTo(fingerPrint);
+    scanner.scan(ProgressIdle.INSTANCE).writeTo(fingerPrint);
   }
 
   private static CloseableHttpClient buildClient() {
