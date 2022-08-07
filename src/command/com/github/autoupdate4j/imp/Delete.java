@@ -49,9 +49,7 @@ final class Delete extends InputAware {
       return;
     if (input.isDirectory()) {
       Directory.rmDir(input.toPath());
-      return;
-    }
-    if (!input.delete()) {
+    } else if (!input.delete()) {
       throw new IOException("Não foi possível deletar " + input + 
         ". Arquivo aberto por outra aplicação!?");
     }
