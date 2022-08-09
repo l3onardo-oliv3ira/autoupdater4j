@@ -2,7 +2,6 @@ package com.github.autoupdate4j.imp;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 import com.github.autoupdate4j.IFingerPrint;
 import com.github.autoupdate4j.IScanner;
@@ -33,12 +32,10 @@ final class RemoteScanner extends DownloaderAware implements IScanner {
     
       downloader.download(fingerPrint, status);
 
-      Optional<File> of  = status.getDownloadedFile();
-      if (!of.isPresent()) {
-        throw new DownloadFailException(downloader.match(fingerPrint));
-      }
+      temp  = status.getDownloadedFile().orElseThrow(
+        () -> new DownloadFailException(downloader.match(fingerPrint))
+      );
       
-      temp = of.get();
     } catch (IOException e) {
       throw new UndefinedUpdateException("Não foi possível baixar o arquivo de "
           + "impressão digital do servidor de atualização.", e);
